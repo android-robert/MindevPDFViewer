@@ -1,0 +1,99 @@
+package com.mindev.mindev_pdfviewer
+
+import android.annotation.TargetApi
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.pdf.PdfRenderer
+import android.os.Build
+import android.os.ParcelFileDescriptor
+import kotlinx.coroutines.*
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+class PDFCore(private val context: Context, pdfFile: File) : CoroutineScope by PdfScope() {
+
+    companion object {
+        const val cachePath = "pdf_cache"
+    }
+
+    private var pdfRenderer: PdfRenderer? = null
+
+    init {
+        initCache()
+        openPdfFile(pdfFile)
+    }
+
+    fun getPDFPagePage() = pdfRenderer?.pageCount ?: 0
+
+    private fun initCache() = with(File(context.cacheDir, cachePath)) {
+        if (exists()) deleteRecursively()
+        mkdirs()
+    }
+
+    private fun getBitmapFromCache(page: Int): Bitmap? {
+        val loadPath = File(File(context.cacheDir, cachePath), page.toString())
+        if (!loadPath.exists()) return null
+
+        return try {
+            BitmapFactory.decodeFile(loadPath.absolutePath)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    @Throws(IOException::class)
+    private fun writeBitmapToCache(pagePosition: Int, bitmap: Bitmap) {
+        val outputStream = File(File(context.cacheDir, cachePath), pagePosition.toString())
+            .apply { createNewFile() }
+            .let(::FileOutputStream)
+
+        with(outputStream) {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, this)
+            flush()
+            close()
+        }
+    }
+
+    private fun openPdfFile(pdfFile: File) {
+        runCatching { ParcelFileDescriptor.open(pdfFile, ParcelFileDescriptor.MODE_READ_ONLY) }
+            .onSuccess { pdfRenderer = PdfRenderer(it) }
+            .onFailure { it.printStackTrace() }
+    }
+
+    fun renderPage(page: Int, ready: ((bitmap: Bitmap?, currentPage: Int) -> Unit)? = null) {
+        if (page >= getPDFPagePage()) return
+        buildBitmap(page) { ready?.invoke(it, page) }
+    }
+
+    private fun buildBitmap(no: Int, onBitmap: (Bitmap?) -> Unit) =
+        CoroutineScope(coroutineContext).launch {
+            var bitmap = getBitmapFromCache(no)
+            bitmap?.let {
+                onBitmap(bitmap)
+                return@launch
+            }
+            withContext(Dispatchers.IO) {
+                try {
+                    pdfRenderer?.let {
+                        val page = it.openPage(no)
+                        with(page) {
+                            bitmap =
+                                Bitmap.createBitmap(width * 2, height * 2, Bitmap.Config.ARGB_8888)
+                            bitmap ?: return@withContext
+                            render(bitmap!!, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+                            close()
+                            writeBitmapToCache(no, bitmap!!)
+                            withContext(Dispatchers.Main) {
+                                onBitmap(bitmap)
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    cancel()
+                }
+            }
+        }
+}
