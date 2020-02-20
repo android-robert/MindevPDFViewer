@@ -5,6 +5,10 @@ This project was created using a [PDFRender](https://developer.android.com/refer
 The key to this technology is not thread safe class<br>
 So I proceeded with the io using `Coroutine`<br>
 
+### demo
+
+![gif](https://github.com/mkw8263/MindevPDFViewer/blob/master/demo1.gif)
+
 ### apply in project
 1.  Add `INTERNET` permissions on your AndroidManifest.xml
 ```xml
