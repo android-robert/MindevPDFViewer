@@ -68,4 +68,5 @@ class MainActivity : AppCompatActivity() {
     }
 }
 ```
-
+### used lib
+[subsampling-scale-image-view](https://github.com/davemorrissey/subsampling-scale-image-view)
