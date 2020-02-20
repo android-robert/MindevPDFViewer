@@ -4,6 +4,7 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.os.Build
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -43,8 +44,9 @@ class MindevPDFViewer @JvmOverloads constructor(
         PdfDownloader(cacheFile, url, statusListener)
     }
 
-    fun fileInit(file: File) {
-        pdfRendererCore = PDFCore(context, file)
+    fun fileInit(path: String) {
+        Log.e("path",path)
+        pdfRendererCore = PDFCore(context, File(path))
 
         LayoutInflater.from(context)
             .inflate(R.layout.pdf_viewer_view, this, false)

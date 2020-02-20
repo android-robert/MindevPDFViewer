@@ -1,8 +1,12 @@
 package com.mindev.mindev_pdfviewer
 
-class PDFAdapter(private val core: PDFCore) : _root_ide_package_.androidx.recyclerview.widget.RecyclerView.Adapter<PDFViewHolder>() {
-    override fun onCreateViewHolder(parent: _root_ide_package_.android.view.ViewGroup, viewType: Int): PDFViewHolder {
-        return _root_ide_package_.android.view.LayoutInflater.from(parent.context)
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+
+class PDFAdapter(private val core: PDFCore) : RecyclerView.Adapter<PDFViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PDFViewHolder {
+        return LayoutInflater.from(parent.context)
             .inflate(R.layout.pdf_item, parent, false)
             .let { PDFViewHolder(it, core) }
     }

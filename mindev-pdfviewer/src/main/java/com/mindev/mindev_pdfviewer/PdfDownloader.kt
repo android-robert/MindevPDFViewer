@@ -19,7 +19,7 @@ class PdfDownloader(
         download()
     }
 
-    private fun download() = CoroutineScope(coroutineContext).launch {
+    private fun download() = launch {
         withContext(Dispatchers.IO) {
             statusListener.onStartDownload()
             if (file.exists()) file.delete()

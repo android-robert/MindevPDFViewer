@@ -68,8 +68,7 @@ class PDFCore(private val context: Context, pdfFile: File) : CoroutineScope by P
         buildBitmap(page) { ready?.invoke(it, page) }
     }
 
-    private fun buildBitmap(no: Int, onBitmap: (Bitmap?) -> Unit) =
-        CoroutineScope(coroutineContext).launch {
+    private fun buildBitmap(no: Int, onBitmap: (Bitmap?) -> Unit) = launch {
             var bitmap = getBitmapFromCache(no)
             bitmap?.let {
                 onBitmap(bitmap)
