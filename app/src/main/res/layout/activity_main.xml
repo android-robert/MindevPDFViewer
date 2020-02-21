@@ -9,6 +9,8 @@
     <com.mindev.mindev_pdfviewer.MindevPDFViewer
         android:id="@+id/pdf"
         android:layout_width="match_parent"
+        app:pdf_animation="true"
+        app:pdf_direction="horizontal"
         android:layout_height="match_parent" />
 
     <TextView

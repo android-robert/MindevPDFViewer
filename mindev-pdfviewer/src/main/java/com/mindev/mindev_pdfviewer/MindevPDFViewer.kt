@@ -1,7 +1,9 @@
 package com.mindev.mindev_pdfviewer
 
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.content.Context
+import android.content.res.TypedArray
 import android.os.Build
 import android.util.AttributeSet
 import android.util.Log
@@ -29,7 +31,30 @@ class MindevPDFViewer @JvmOverloads constructor(
         fun unsupportedDevice()
     }
 
-    private lateinit var pdfRendererCore: PDFCore
+
+    private var orientation: Direction = Direction.HORIZONTAL
+    private var isPdfAnimation: Boolean = false
+
+    init {
+        getAttrs(attrs, defStyleAttr)
+    }
+
+    @SuppressLint("CustomViewStyleable")
+    private fun getAttrs(attrs: AttributeSet?, defStyle: Int) {
+        val typedArray =
+            context.obtainStyledAttributes(attrs, R.styleable.MindevPDFViewer, defStyle, 0)
+        setTypeArray(typedArray)
+    }
+
+    private fun setTypeArray(typedArray: TypedArray) {
+        val ori =
+            typedArray.getInt(R.styleable.MindevPDFViewer_pdf_direction, Direction.HORIZONTAL.ori)
+        orientation = Direction.values().first { it.ori == ori }
+        isPdfAnimation = typedArray.getBoolean(R.styleable.MindevPDFViewer_pdf_animation, false)
+        typedArray.recycle()
+    }
+
+    private lateinit var pdfRendererCore: PdfCore
     private lateinit var statusListener: MindevViewerStatusListener
     private val pageTotalCount get() = pdfRendererCore.getPDFPagePage()
 
@@ -45,15 +70,23 @@ class MindevPDFViewer @JvmOverloads constructor(
     }
 
     fun fileInit(path: String) {
-        Log.e("path",path)
-        pdfRendererCore = PDFCore(context, File(path))
+
+        pdfRendererCore = PdfCore(context, File(path))
 
         LayoutInflater.from(context)
             .inflate(R.layout.pdf_viewer_view, this, false)
             .let(::addView)
 
         val rv = recyclerView.apply {
-            adapter = PDFAdapter(pdfRendererCore)
+            layoutManager = LinearLayoutManager(this.context).apply {
+                orientation =
+                    if (this@MindevPDFViewer.orientation.ori == Direction.HORIZONTAL.ori) {
+                        LinearLayoutManager.HORIZONTAL
+                    } else {
+                        LinearLayoutManager.VERTICAL
+                    }
+            }
+            adapter = PdfAdapter(pdfRendererCore,isPdfAnimation)
             addOnScrollListener(scrollListener)
         }
 

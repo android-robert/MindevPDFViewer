@@ -13,7 +13,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-class PDFCore(private val context: Context, pdfFile: File) : CoroutineScope by PdfScope() {
+class PdfCore(private val context: Context, pdfFile: File) : CoroutineScope by PdfScope() {
 
     companion object {
         const val cachePath = "pdf_cache"

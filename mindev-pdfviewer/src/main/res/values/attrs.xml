@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MindevPDFViewer">
+        <attr name="pdf_direction" format="enum">
+            <enum name="vertical" value="1"/>
+            <enum name="horizontal" value="2"/>
+        </attr>
+        <attr name="pdf_animation" format="boolean"/>
+    </declare-styleable>
+</resources>
