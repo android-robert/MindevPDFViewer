@@ -44,9 +44,10 @@ pdf_animation | false | pdf page change animation
 - xml
 ```xml
     <com.mindev.mindev_pdfviewer.MindevPDFViewer
-        android:id="@+id/pdf"
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        app:pdf_animation="true"
+        app:pdf_direction="horizontal" />
 ```
 <br>
 
