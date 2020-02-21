@@ -31,8 +31,14 @@ Add it in your root build.gradle at the end of repositories:
 Step 3. Add the dependency
 
 	dependencies {
-	        implementation 'com.github.mkw8263:MindevPDFViewer:1.02'
+	        implementation 'com.github.mkw8263:MindevPDFViewer:1.0.2'
 	}
+
+## Attributes
+Attributes | Default Value | Description
+--- | --- |  ---
+pdf_direction | horizontal | pdf direction
+pdf_animation | false | pdf page change animation
 
 ### sample code
 - xml
@@ -80,12 +86,6 @@ class MainActivity : AppCompatActivity() {
     }
 }
 ```
-
-## Attributes
-Attributes | Default | Description
---- | --- | --- | ---
-pdf_direction | horizontal | pdf direction
-pdf_animation | false | pdf page change animation
 
 ### used lib
 [subsampling-scale-image-view](https://github.com/davemorrissey/subsampling-scale-image-view)
