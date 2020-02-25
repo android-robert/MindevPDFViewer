@@ -11,30 +11,47 @@ Also `Support API level 21 !!`
 
 ![gif](https://github.com/mkw8263/MindevPDFViewer/blob/master/demo1.gif)
 
-### apply in project
-1.  Add `INTERNET` permissions on your AndroidManifest.xml
+### How to
+To get a Git project into your build:
+
+Step 1. Add `INTERNET` permissions on your AndroidManifest.xml
 ```xml
 <uses-permission android:name="android.permission.INTERNET" />
 ```
 
-2. Add the dependency
-```gradle
-dependencies {
-	   implementation 'com.github.mkw8263:MindevPDFViewer:1.0.1'
-}
-```
+Step 2. Add the JitPack repository to your build file
+Add it in your root build.gradle at the end of repositories:
 
-3. sample code
-- Xml
+	allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+Step 3. Add the dependency
+
+	dependencies {
+	        implementation 'com.github.mkw8263:MindevPDFViewer:1.0.2'
+	}
+
+## Attributes
+Attributes | Default Value | Description
+--- | --- |  ---
+pdf_direction | horizontal | pdf direction
+pdf_animation | false | pdf page change animation
+
+### sample code
+- xml
 ```xml
     <com.mindev.mindev_pdfviewer.MindevPDFViewer
-        android:id="@+id/pdf"
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        app:pdf_animation="true"
+        app:pdf_direction="horizontal" />
 ```
 <br>
 
-- Code
+- code
 ```kotlin
 class MainActivity : AppCompatActivity() {
 
@@ -70,6 +87,7 @@ class MainActivity : AppCompatActivity() {
     }
 }
 ```
+
 ### used lib
 [subsampling-scale-image-view](https://github.com/davemorrissey/subsampling-scale-image-view)
 
