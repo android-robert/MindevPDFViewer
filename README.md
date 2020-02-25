@@ -31,7 +31,7 @@ Add it in your root build.gradle at the end of repositories:
 Step 3. Add the dependency
 
 	dependencies {
-	        implementation 'com.github.mkw8263:MindevPDFViewer:1.0.2'
+	        implementation 'com.github.mkw8263:MindevPDFViewer:1.0.3'
 	}
 
 ## Attributes
