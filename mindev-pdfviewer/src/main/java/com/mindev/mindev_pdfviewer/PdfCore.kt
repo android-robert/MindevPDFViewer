@@ -65,7 +65,12 @@ class PdfCore(private val context: Context, pdfFile: File) : CoroutineScope by P
 
     fun renderPage(page: Int, ready: ((bitmap: Bitmap?, currentPage: Int) -> Unit)? = null) {
         if (page >= getPDFPagePage()) return
-        buildBitmap(page) { ready?.invoke(it, page) }
+        buildBitmap(page) {
+            launch {
+                synchronized(this@PdfCore){
+                    ready?.invoke(it, page) }
+                }
+            }
     }
 
     private fun buildBitmap(no: Int, onBitmap: (Bitmap?) -> Unit) = launch {
@@ -85,9 +90,7 @@ class PdfCore(private val context: Context, pdfFile: File) : CoroutineScope by P
                             render(bitmap!!, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
                             close()
                             writeBitmapToCache(no, bitmap!!)
-                            withContext(Dispatchers.Main) {
-                                onBitmap(bitmap)
-                            }
+                            onBitmap(bitmap)
                         }
                     }
                 } catch (e: Exception) {
