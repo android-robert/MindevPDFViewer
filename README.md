@@ -64,6 +64,11 @@ class MainActivity : AppCompatActivity() {
         lifecycle.addObserver(PdfScope())
     }
 
+    override fun onDestroy() {
+        pdf.pdfRendererCore?.clear()
+        super.onDestroy()
+    }
+
     private val statusListener = object : MindevPDFViewer.MindevViewerStatusListener {
         override fun onStartDownload() {
         }
