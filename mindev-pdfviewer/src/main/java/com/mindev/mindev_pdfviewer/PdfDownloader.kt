@@ -5,6 +5,7 @@ import android.os.Build
 import kotlinx.coroutines.*
 import java.io.BufferedInputStream
 import java.io.File
+import java.io.IOException
 import java.net.URL
 
 
@@ -14,6 +15,10 @@ class PdfDownloader(
     private val downLoadUrl: String,
     private val statusListener: MindevPDFViewer.MindevViewerStatusListener
 ) : CoroutineScope by PdfScope() {
+
+    companion object {
+        const val BUFFER_SIZE = 8192
+    }
 
     init {
         download()
@@ -53,7 +58,7 @@ class PdfDownloader(
             } catch (e: IOException) {
                 e.printStackTrace()
                 withContext(Dispatchers.Main) {
-                    statusListener.onFailDownLoad(PayPdfException.FailDownload)
+                    statusListener.onFail(e)
                 }
                 cancel()
             }
