@@ -3,10 +3,7 @@ package com.mindev.mindev_pdfviewer
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 class PdfScope : CoroutineScope, LifecycleObserver {
@@ -15,5 +12,5 @@ class PdfScope : CoroutineScope, LifecycleObserver {
         get() = job + Dispatchers.Main
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun destory() = coroutineContext.cancelChildren()
+    fun destory() = coroutineContext.cancel()
 }

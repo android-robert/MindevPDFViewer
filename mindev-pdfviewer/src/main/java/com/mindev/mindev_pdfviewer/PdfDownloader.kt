@@ -20,37 +20,40 @@ class PdfDownloader(
     }
 
     private fun download() = launch {
+        statusListener.onStartDownload()
         withContext(Dispatchers.IO) {
-            statusListener.onStartDownload()
-            if (file.exists()) file.delete()
             try {
-                val bufferSize = 8192
+                if (file.exists()) file.delete()
+                val bufferSize = BUFFER_SIZE
                 val url = URL(downLoadUrl)
 
                 val connection = url.openConnection().also { it.connect() }
-
                 val totalLength = connection.contentLength
-                val inputStream = BufferedInputStream(url.openStream(), bufferSize)
-                val outputStream = file.outputStream()
                 var downloaded = 0
 
-                do {
-                    val data = ByteArray(bufferSize)
-                    val count = inputStream.read(data)
-                    if (count == -1) break
-                    if (totalLength > 0) {
-                        downloaded += bufferSize
-                        withContext(Dispatchers.Main) {
-                            (downloaded.toFloat() / totalLength.toFloat() * 100F)
-                                .toInt()
-                                .let(statusListener::onProgressDownload)
-                        }
+                BufferedInputStream(url.openStream(), bufferSize).use { input ->
+                    file.outputStream().use { output ->
+                        do {
+                            val data = ByteArray(bufferSize)
+                            val count = input.read(data)
+                            if (count == -1) break
+                            if (totalLength > 0) {
+                                downloaded += bufferSize
+                                withContext(Dispatchers.Main) {
+                                    (downloaded.toFloat() / totalLength.toFloat() * 100F)
+                                        .toInt()
+                                        .let(statusListener::onProgressDownload)
+                                }
+                            }
+                            output.write(data, 0, count)
+                        } while (true)
+
                     }
-                    outputStream.write(data, 0, count)
-                } while (true)
-            } catch (e: Exception) {
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
                 withContext(Dispatchers.Main) {
-                    statusListener.onFail(e)
+                    statusListener.onFailDownLoad(PayPdfException.FailDownload)
                 }
                 cancel()
             }

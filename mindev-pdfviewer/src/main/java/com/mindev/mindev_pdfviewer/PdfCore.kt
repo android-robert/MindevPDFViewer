@@ -26,6 +26,12 @@ class PdfCore(private val context: Context, pdfFile: File) : CoroutineScope by P
         openPdfFile(pdfFile)
     }
 
+    fun clear() = try {
+        pdfRenderer?.close()
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+
     fun getPDFPagePage() = pdfRenderer?.pageCount ?: 0
 
     private fun initCache() = with(File(context.cacheDir, cachePath)) {

@@ -35,6 +35,7 @@ class MindevPDFViewer @JvmOverloads constructor(
     private var orientation: Direction = Direction.HORIZONTAL
     private var isPdfAnimation: Boolean = false
 
+
     init {
         getAttrs(attrs, defStyleAttr)
     }
@@ -54,9 +55,9 @@ class MindevPDFViewer @JvmOverloads constructor(
         typedArray.recycle()
     }
 
-    private lateinit var pdfRendererCore: PdfCore
+    var pdfRendererCore: PdfCore? = null
     private lateinit var statusListener: MindevViewerStatusListener
-    private val pageTotalCount get() = pdfRendererCore.getPDFPagePage()
+    private val pageTotalCount get() = pdfRendererCore?.getPDFPagePage() ?: 0
 
     fun initializePDFDownloader(url: String, statusListener: MindevViewerStatusListener) {
         this.statusListener = statusListener
@@ -86,7 +87,7 @@ class MindevPDFViewer @JvmOverloads constructor(
                         LinearLayoutManager.VERTICAL
                     }
             }
-            adapter = PdfAdapter(pdfRendererCore,isPdfAnimation)
+            if (pdfRendererCore != null) adapter = PdfAdapter(pdfRendererCore!!, isPdfAnimation)
             addOnScrollListener(scrollListener)
         }
 
